@@ -56,7 +56,7 @@ discim_col_names = colnames(ratings_dat_discrimination_task)
 write.csv(ratings_dat_discrimination_task, "ratings_dat_discrim_preprocessed.csv")
 
 
-# EXP 1: CATEGORICAL PERCEPTION ;Col 192 - end (add in 1-27 & add back in for general subject info)
+# EXP 2: CATEGORICAL PERCEPTION ;Col 192 - end (add in 1-27 & add back in for general subject info)
 header_names[191]
 ratings_dat_catperc_task = ratings_dat
 ratings_dat_catperc_task = ratings_dat_catperc_task[,-c(28:191)] # remove 28-191
