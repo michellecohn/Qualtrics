@@ -33,7 +33,7 @@ write.csv(ratings_dat, "ratings_dat.csv")
 ratings_dat = subset(ratings_dat, What.is.the.gender.of.the.voice.you.just.heard. == "Female")
 ratings_dat = subset(ratings_dat, What.was.the.name.of.the.speaker. == "Madison")
 
-# BLOCK 2 (Linda, Female)
+# BLOCK 2 (Linda, Female) 
 ratings_dat = subset(ratings_dat, What.is.the.gender.of.the.voice.you.just.heard..1	 == "Female")
 ratings_dat = subset(ratings_dat, What.was.the.name.of.the.speaker..1 == "Linda")
 
