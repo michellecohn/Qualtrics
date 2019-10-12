@@ -1,0 +1,98 @@
+################################################################################################
+#
+# Reformatting Qualtrics Data
+#
+# Load in, remove missing rows, "grade" responses
+# Split up multiple experiments into separate dataframes / save to csv
+# ---> Long format
+#
+# MC 10/12/19
+#
+################################################################################################
+
+
+###### CLEAN UP THE DATA #####
+# 1) Pulll in the dataset 
+cd = "/Volumes/experiment/"
+setwd(cd)
+ratings_dat = read.csv("ratings_data.csv", skip = 1, header = TRUE)
+
+# 2) Delete 2 of the header rows (Row 1)
+ratings_dat = ratings_dat[-c(1),]
+
+# 4) Remove any subjects who didn't finish 
+ratings_dat = subset(ratings_dat, Finished == "TRUE")
+
+# 5) Write .csv 
+write.csv(ratings_dat, "ratings_dat.csv")
+
+
+######## OTHER GRADING (Remove subjects who didn't answer the comprehension Q correctly) #########
+
+# BLOCK 1 (Madison, Female)
+ratings_dat = subset(ratings_dat, What.is.the.gender.of.the.voice.you.just.heard. == "Female")
+ratings_dat = subset(ratings_dat, What.was.the.name.of.the.speaker. == "Madison")
+
+# BLOCK 2 (Linda, Female)
+ratings_dat = subset(ratings_dat, What.is.the.gender.of.the.voice.you.just.heard..1	 == "Female")
+ratings_dat = subset(ratings_dat, What.was.the.name.of.the.speaker..1 == "Linda")
+
+# After whole experiment 
+ratings_dat = subset(ratings_dat, Who.is.older..Linda.or.Madison. == "Linda")
+write.csv(ratings_dat, "ratings_dat_preprocessed.csv")
+
+
+################################## (> 1 Experiment? Extract)  ##################################################################
+
+# Find header columns
+# Look at column names; 
+header_names = colnames(ratings_dat)
+
+# EXP 1: DISCRIMINATION;Col 28 - 191 (add in 1-27 & add back in: 452-456 for general subject info)
+#header_names[451]
+ratings_dat_discrimination_task = ratings_dat
+ratings_dat_discrimination_task = ratings_dat[,-c(192:451)] # Remove cols 192-451
+discim_col_names = colnames(ratings_dat_discrimination_task)
+write.csv(ratings_dat_discrimination_task, "ratings_dat_discrim_preprocessed.csv")
+
+
+# EXP 1: CATEGORICAL PERCEPTION ;Col 192 - end (add in 1-27 & add back in for general subject info)
+header_names[191]
+ratings_dat_catperc_task = ratings_dat
+ratings_dat_catperc_task = ratings_dat_catperc_task[,-c(28:191)] # remove 28-191
+catper_col_names = colnames(ratings_dat_catperc_task)
+write.csv(ratings_dat_catperc_task, "ratings_dat_catperc_preprocessed.csv")
+
+
+
+################################## RESHAPE DATAFRAME (wide -> long) ##################################################################
+# If data is already cleaned/preprocessed, can load in dataframe here 
+#cd = "/Volumes/data/"
+#setwd(cd)
+#ratings_dat_discrimination_task = read.csv("ratings_dat_discrim_preprocessed", header = TRUE)
+
+##### Here data = ratings_dat_discrimination_task 
+data = ratings_dat_discrimination_task
+
+# 1) Define all columns that will be the same for each trial (i.e., subject-specific attributes)
+
+# Look at column names; 
+header_names = colnames(data)
+
+# Extract col. 1-27, 190-196
+subject_header_names = header_names[1:27]  # First 27 columns are subject demographic info (e.g., age, gender, etc.)
+other_demo_headers= header_names[190:196]
+subject_header_names = c(subject_header_names, other_demo_headers) 
+
+# Add in any comprehension questions that may be in the middle of the experiment columns
+subject_header_names =c(subject_header_names, "What.is.the.gender.of.the.voice.you.just.heard.", "What.was.the.name.of.the.speaker.")
+                        
+
+############ RESHAPING ##############
+library(reshape2)
+# Specify id.vars: the variables to keep but not split apart on
+data_long = melt(data, id.vars=subject_header_names)
+
+write.csv(data_long, "ratings_dat_discrimination_task_long.csv")
+
+
