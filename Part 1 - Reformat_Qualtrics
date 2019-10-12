@@ -2,7 +2,7 @@
 #
 # Reformatting Qualtrics Data
 #
-# Load in, remove missing rows, "grade" responses
+# Load in, remove missing rows, 
 # Split up multiple experiments into separate dataframes / save to csv
 # ---> Long format
 #
